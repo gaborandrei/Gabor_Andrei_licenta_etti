@@ -1,0 +1,14 @@
+	reg signed [15:0] vol_1_data; 
+		
+	always@(posedge s00_axi_aclk)
+	begin
+		if(s00_axi_aresetn == 1'b0)
+			vol_1_data <= 0;
+		else
+			if(vol_en)
+				begin
+				vol_1_data <= signal_out*vol_value;
+				end
+			else
+				vol_1_data <= signal_out;
+	end

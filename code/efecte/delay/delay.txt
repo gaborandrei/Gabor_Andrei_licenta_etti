@@ -1,0 +1,38 @@
+
+	//memory for delay----------------------------------------
+	reg signed [15:0] delay_buffer [0:40000];
+	reg [31:0] delay_count;
+	reg [31:0] out_wire;
+	
+	always@(posedge clk)
+	begin
+		if(~s00_axi_aresetn)
+		begin
+			delay_count <= 0;
+		end
+		else
+			if(ws_count == 5'h1E)
+			begin
+				delay_buffer[delay_count] <= data;
+				if(delay_count == delay_value)
+					delay_count <= 0;
+				else
+					delay_count <= delay_count + 1;
+			end
+	end
+
+	reg [15:0] delay_out;
+
+	always@(posedge clk)
+	begin
+		if(~s00_axi_aresetn)
+		begin
+			delay_out <= 0;
+		end
+		else
+			if(delay_en == 1)
+			   delay_out <= delay_out + delay_buffer[delay_count]
+			else
+			   delay_out <= delay_out;
+			
+	end

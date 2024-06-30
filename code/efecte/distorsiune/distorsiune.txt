@@ -1,0 +1,27 @@
+	reg signed [15:0] dist_data;
+	
+	always@(posedge s00_axi_aclk)
+	begin
+		if(s00_axi_aresetn == 1'b0)
+			dist_data <= 0;
+		else
+			if(dist_en)
+				begin
+				if(vol_1_data[15])
+					begin
+						if(vol_1_data <= -dist_value)
+							dist_data <= -dist_value;
+						else
+							dist_data <= vol_1_data;
+					end
+				else //positive value
+					begin
+						if(vol_1_data >= dist_value)
+							dist_data <= dist_value;
+						else
+							dist_data <= vol_1_data;
+					end
+				end
+			else
+				dist_data <= vol_1_data;
+	end

@@ -1,0 +1,79 @@
+	reg signed [15:0] reverb_buffer [0:10000];
+	reg [31:0] reverb_count;
+	
+	always@(posedge clk)
+	begin
+		if(~s00_axi_aresetn)
+		begin
+			reverb_count <= 0;
+		end
+		else
+			begin
+				reverb_buffer[reverb_count] <= data;
+				if(reverb_count == 8000)
+					reverb_count <= 0;
+				else
+					reverb_count <= reverb_count + 1;
+			end
+	end
+	//*******************************************************
+	
+	//*******************************************************
+	reg signed [15:0] reverb_buffer1 [0:8000];
+	reg [31:0] reverb_count1;
+	
+	always@(posedge clk)
+	begin
+		if(~s00_axi_aresetn)
+		begin
+			reverb_count1 <= 0;
+		end
+		else
+			begin
+				reverb_buffer1[reverb_count1] <= data;
+				if(reverb_count1 == 6000)
+					reverb_count1 <= 0;
+				else
+					reverb_count1 <= reverb_count1 + 1;
+			end
+	end
+
+	//*******************************************************
+
+	//*******************************************************
+	reg signed [15:0] reverb_buffer2 [0:8000];
+	reg [31:0] reverb_count2;
+	
+	always@(posedge clk)
+	begin
+		if(~s00_axi_aresetn)
+		begin
+			reverb_count2 <= 0;
+		end
+		else
+			begin
+				reverb_buffer2[reverb_count2] <= data;
+				if(reverb_count2 == 6000)
+					reverb_count1 <= 0;
+				else
+					reverb_count2 <= reverb_count2 + 2;
+			end
+	end
+	//*******************************************************
+
+	wire [15:0] rev_wire;
+	assign rev_wire = reverb_buffer2[reverb_count2]/3 + reverb_buffer[reverb_count]/3 + reverb_buffer1[reverb_count1]/3;
+
+	always@(posedge clk)
+	begin
+		if(~s00_axi_aresetn)
+		begin
+			delay_out <= 0;
+		end
+		else
+			if(reverb_en == 1)
+			   reverb_out <= reverb_out + reverb_wire[delay_count]
+			else
+			   reverb_out <= reverb_out;
+			
+	end	
